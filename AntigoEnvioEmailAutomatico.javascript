@@ -1,73 +1,106 @@
-function onEdit(e) {
-  // Verifica se há um objeto de evento (e) passado para a função
-  if (!e) {
+function sendEmails() {
+  var sheetName = 'ATIVIDADES';
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  
+  if (!sheet) {
+    console.error('Planilha "' + sheetName + '" não encontrada.');
     return;
   }
-
-  // Obtém a planilha ativa onde ocorreu a edição
-  var sheet = e.source.getActiveSheet();
   
-  // Obtém o intervalo (célula ou grupo de células) que foi editado
-  var range = e.range;
+  var dataRange = sheet.getDataRange();
+  var data = dataRange.getValues();
+  var headers = data[0];
   
-  // Obtém o número da linha onde ocorreu a edição
-  var row = range.getRow();
+  // Obtém o índice da coluna 'Status Envio E-mail'
+  var statusEnvioIndex = headers.indexOf('Status Envio E-mail');
   
-  // Obtém o número da coluna onde ocorreu a edição
-  var col = range.getColumn();
-  
-  // Obtém os cabeçalhos (nomes das colunas) da primeira linha da planilha
-  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-  
-  // Verifica se a linha alterada é a linha 1 (cabeçalhos)
-  if (row === 1) {
+  // Verifica se a coluna 'Status Envio E-mail' existe
+  if (statusEnvioIndex === -1) {
+    console.error('Coluna "Status Envio E-mail" não encontrada.');
     return;
   }
-
-  // Define as colunas que serão monitoradas para alterações
-  var watchColumns = ["COMO (PLANO DE AÇÃO)", "STATUS AUTOMÁTICO", "DATA STATUS","Responsável","Impedimento?","Data Fim Real"];
   
-  // Mapeia os índices das colunas monitoradas com base nos cabeçalhos da planilha
-  var watchColumnsIndices = watchColumns.map(function(colName) {
-    return headers.indexOf(colName) + 1; // +1 porque getRange e getValues usam indexação baseada em 1
-  });
+  // E-mails para cópia
+  var ccEmails = ["jessica.alexandre@totvs.com.br", "pmo.integrador@totvs.com.br", "carlos.junior@emive.com.br"];
+  
+  for (var i = 1; i < data.length; i++) {
+    var row = data[i];
+    
+    var email = row[headers.indexOf('Email')];
+    var responsavel = formatName(row[headers.indexOf('Responsável')]);
+    var item = row[headers.indexOf('ITEM')];
+    var atividade = row[headers.indexOf('ATIVIDADE')];
+    var status = row[headers.indexOf('Status Automático')];
+    var dataFim = row[headers.indexOf('Nova Data Fim Planejada')];
+    var ondaImplantacao = row[headers.indexOf('ONDA DE IMPLANTAÇÃO')];
+    var dataStatus = row[headers.indexOf('DATA STATUS')];
+    var planoAcao = row[headers.indexOf('COMO (PLANO DE AÇÃO)')];
+    var nomeTabela = row[headers.indexOf('NOME DA TABELA')]; // Obtém o valor da coluna NOME DA TABELA
+    
+    // Verifica se o conteúdo da coluna 'ONDA DE IMPLANTAÇÃO' é igual a 1
+    if (ondaImplantacao !== 1) {
+      continue;
+    }
+    
+    // Verifica se o status é CONCLUÍDO ou CANCELADA
+    if (status === "CONCLUÍDO" || status === "CANCELADA") {
+      sheet.getRange(i + 1, statusEnvioIndex + 1).setValue('Não Enviado');
+      continue;
+    }
+    
+    // Formata a data para DD/MM/AAAA
+    var dataFimFormatada = Utilities.formatDate(new Date(dataFim), Session.getScriptTimeZone(), "dd/MM/yyyy");
+    var dataStatusFormatada = Utilities.formatDate(new Date(dataStatus), Session.getScriptTimeZone(), "dd/MM/yyyy");
+    
+    // Constrói o item no formato "ITEM + ATIVIDADE"
+    var itemCompleto = item + " - " + atividade;
+    
+    // Constrói o corpo do e-mail com quebras de linha utilizando HTML
+    var corpoEmail = "Olá " + responsavel + ",<br><br>" +
+                    "Espero que esteja bem.<br><br>" +
+                    "Está no radar do PMO Integrador o acompanhamento da atividade abaixo:<br><br>" +
+                    "<b>Item:</b> " + itemCompleto + "<br><br>";
+    
+    // Inclui a variável 'NOME DA TABELA' se não estiver vazia
+    if (nomeTabela) {
+      corpoEmail += "<b>Tabela vinculada à atividade:</b> " + nomeTabela + "<br><br>";
+    }
 
-  // Verifica se a coluna editada está entre as colunas monitoradas
-  if (watchColumnsIndices.indexOf(col) !== -1) {
-    // Obtém o valor antigo da célula editada (ou define como "vazio" se não houver valor antigo)
-    var oldValue = e.oldValue || "vazio";
+    corpoEmail += "<b>Status:</b> " + status + "<br><br>" +
+                  "<b>Prazo:</b> " + dataFimFormatada + "<br><br>" +
+                  "<b>Ultima atualização:</b> " + dataStatusFormatada + "<br><br>";
     
-    // Obtém o novo valor formatado da célula editada
-    var newValue = range.getDisplayValue();
+    // Inclui a variável 'COMO (PLANO DE AÇÃO)' se não estiver vazia
+    if (planoAcao) {
+      corpoEmail += "<b>Evolução da atividade:</b> " + planoAcao + "<br><br>";
+    }
     
-    // Obtém o timestamp atual em milissegundos
-    var timestamp = new Date().getTime();
+    corpoEmail += "Favor informar se houve alguma atualização na atividade, previsão de início, bem como plano de ação e/ou previsão para conclusão.<br><br>" +
+                  "Conto com seu apoio para atualização do status diário.<br><br>" +
+                  "Jessica Alexandre | PMO Integrador";
     
-    // Formata o timestamp para o formato "dd/MM/yyyy HH:mm:ss"
-    var timestampFormatted = Utilities.formatDate(new Date(timestamp), Session.getScriptTimeZone(), "dd/MM/yyyy HH:mm:ss");
-    
-    // Obtém o e-mail do usuário ativo que realizou a edição
-    var user = Session.getActiveUser().getEmail();
-    
-    // Obtém o nome da coluna editada com base nos cabeçalhos da planilha
-    var columnName = headers[col - 1]; // -1 porque headers é indexado a partir de 0
-    
-    // Monta a mensagem de histórico com informações sobre a alteração
-    var historyValue = `Alteração em ${timestampFormatted} por ${user}: ${columnName} alterada para "${newValue}".`;
-
-    // Obtém o índice da coluna "OBSERVAÇÃO"
-    var observationCol = headers.indexOf("OBSERVAÇÃO") + 1;
-    
-    // Obtém a célula específica na coluna "OBSERVAÇÃO" e na linha editada
-    var observationCell = sheet.getRange(row, observationCol);
-    
-    // Obtém o valor atual da célula de OBSERVAÇÃO
-    var observationValue = observationCell.getValue();
-
-    // Adiciona a nova informação ao final do valor atual da célula de OBSERVAÇÃO, separando por uma nova linha
-    var updatedObservationValue = observationValue + "\n" + historyValue;
-
-    // Define o valor da célula de OBSERVAÇÃO com o novo valor concatenado
-    observationCell.setValue(updatedObservationValue);
+    // Envio do e-mail com cópia para os e-mails desejados
+    try {
+      MailApp.sendEmail({
+        to: email,
+        cc: ccEmails.join(","),
+        subject: "[PROTHEUS EMIVE] Atualização de atividade | " + responsavel + " - " + itemCompleto,
+        htmlBody: corpoEmail
+      });
+      
+      // Registra o status de envio com data e hora na planilha
+      var agora = new Date();
+      var dataHoraEnvio = Utilities.formatDate(agora, Session.getScriptTimeZone(), "dd/MM/yyyy HH:mm:ss");
+      sheet.getRange(i + 1, statusEnvioIndex + 1).setValue('Enviado em ' + dataHoraEnvio);
+    } catch (e) {
+      // Em caso de erro ao enviar o e-mail, registra como "Não Enviado" na planilha
+      sheet.getRange(i + 1, statusEnvioIndex + 1).setValue('Não Enviado');
+      console.error('Erro ao enviar e-mail para ' + email + ': ' + e.message);
+    }
   }
+}
+
+function formatName(name) {
+  if (!name) return '';
+  return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
 }
