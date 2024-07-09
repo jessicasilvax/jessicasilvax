@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- Meta tags essenciais -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atualização de Atividade</title>
+    
+    <!-- Estilos CSS para formatação do e-mail -->
+    <style>
+        /* Estilos gerais do corpo do e-mail */
+        body {
+            font-family: Tahoma; /* Fonte do texto */
+            line-height: 1.6; /* Espaçamento entre linhas */
+            background-color: #f4f4f4; /* Cor de fundo */
+            padding: 20px; /* Espaçamento interno */
+        }
+        
+        /* Container principal */
+        .container {
+            max-width: 1200px; /* Largura máxima do container */
+            margin: 0 auto; /* Centraliza o container */
+            background: #fff; /* Cor de fundo do container */
+            padding: 20px; /* Espaçamento interno */
+            border-radius: 5px; /* Arredondamento dos cantos */
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Sombra ao redor do container */
+        }
+
+        /* Estilo do cabeçalho */
+        .header {
+            text-align: right; /* Alinhamento à direita */
+            margin-bottom: 20px; /* Margem inferior */
+            position: relative; /* Posicionamento relativo */
+        }
+
+        /* Estilo da imagem à direita no cabeçalho */
+        .right-img {
+            top: -50px; /* Posição superior da imagem */
+            right: 10px; /* Posição direita da imagem */
+            height: auto; /* Altura automática */
+        }
+
+        /* Barra colorida abaixo do cabeçalho */
+        .bar {
+            height: 5px; /* Altura da barra */
+            background-color: #00b294; /* Cor da barra */
+            margin-bottom: 30px; /* Margem inferior */
+            margin-top: 10px; /* Margem superior */
+        }
+
+        /* Estilo do título principal */
+        h1 {
+            color: white; /* Cor do texto */
+            text-align: center; /* Alinhamento centralizado */
+            font-size: 22px; /* Tamanho da fonte */
+            margin-top: 0; /* Margem superior */
+            padding-top: 10px; /* Espaçamento interno superior */
+            background-color: #2a3b82; /* Cor de fundo */
+            padding: 10px; /* Espaçamento interno */
+            border-radius: 5px; /* Arredondamento dos cantos */
+            font-family: Tahoma; /* Fonte do texto */
+        }
+
+        /* Estilo dos parágrafos */
+        p {
+            color: #555; /* Cor do texto */
+        }
+
+        /* Estilo do botão */
+        .button {
+            background-color: #ddd; /* Cor de fundo */
+            color: #2a3b82; /* Cor do texto */
+            padding: 10px 20px; /* Espaçamento interno */
+            text-align: center; /* Alinhamento centralizado */
+            border: none; /* Sem borda */
+            border-radius: 5px; /* Arredondamento dos cantos */
+            cursor: pointer; /* Cursor de ponteiro */
+            text-decoration: none; /* Sem sublinhado */
+            display: block; /* Exibição em bloco */
+            margin-top: 20px; /* Margem superior */
+            width: fit-content; /* Largura ajustada ao conteúdo */
+            font-weight: bold; /* Fonte em negrito */
+
+        }
+
+        /* Estilo da tabela */
+        table {
+            width: 100%; /* Largura total */
+            border-collapse: collapse; /* Colapsa bordas */
+            margin-top: 20px; /* Margem superior */
+            border-radius: 6px; /* Arredondamento dos cantos */
+            overflow: hidden; /* Oculta o conteúdo que transborda */
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Sombra ao redor da tabela */
+            font-family: Tahoma; /* Fonte do texto */
+        }
+
+        /* Estilo das células de cabeçalho */
+        th, td {
+            border: 1px solid #ddd; /* Borda das células */
+            padding: 12px; /* Espaçamento interno */
+            text-align: left; /* Alinhamento à esquerda */
+            font-size: 12px; /* Tamanho da fonte */
+           /* font-weight: bold; /* Fonte em negrito */
+        }
+
+        /* Estilo das células de cabeçalho */
+        th {
+            background-color: #00c1a4; /* Cor de fundo */
+            color: #fff; /* Cor do texto */
+            font-weight: normal; /* Fonte normal */
+            text-align: center; /* Alinhamento centralizado */
+            font-size: 12px; /* Tamanho da fonte */
+            font-weight: bold; /* Fonte em negrito */
+
+        }
+
+        /* Estilo das células de dados */
+        td {
+            background-color: #fff; /* Cor de fundo */
+            color: #555; /* Cor do texto */
+        }
+
+        /* Estilo das linhas pares */
+        tr:nth-child(even) {
+            background-color: #f9f9f9; /* Cor de fundo */
+        }
+
+        /* Centraliza o iframe */
+        .iframe-container {
+            text-align: center; /* Centraliza o iframe */
+            margin-top: 20px; /* Margem superior */
+        }
+
+        .iframe-container iframe {
+            border: 0; /* Remove a borda do iframe */
+            border-radius: 5px; /* Arredonda os cantos do iframe */
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Sombra ao redor do iframe */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <!-- Imagem do cabeçalho -->
+            <img class="right-img" src="https://drive.google.com/uc?export=view&id=1_PqhAwM5-QM-krZJlti4UZthy3CjLiR9" alt="Segunda Imagem">
+        </div>
+        
+        <!-- Título principal -->
+        <h1>Atualização Atividade de Migração | Protheus</h1>
+        <div class="bar"></div> <!-- Barra de separação -->
+
+        <!-- Saudações e introdução -->
+        <p>Olá <?= responsavel ?>,</p>
+        <p>Espero que esteja bem.</p>
+        <p>Está no radar do PMO Integrador o acompanhamento da(s) atividade(s) abaixo:</p>
+        
+        <!-- Tabela de atividades -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Atividade</th>
+                    <th>Status</th>
+                    <th>Prazo</th>
+                    <th>Tabela Protheus</th>
+                    <th>Evolução da atividade</th>
+                    <th>Última atualização</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop para preencher as atividades -->
+                <? for (var i = 0; i < atividades.length; i++) { ?>
+                    <tr>
+                        <td><?= atividades[i].itemCompleto ?></td>
+                        <td><?= atividades[i].status ?></td>
+                        <td><?= atividades[i].dataFimFormatada ?></td>
+                        <td><?= atividades[i].nomeTabela ?></td>
+                        <td><?= atividades[i].planoAcao ?></td>
+                        <td><?= atividades[i].dataStatusFormatada ?></td>
+                    </tr>
+                <? } ?>
+            </tbody>
+        </table>
+        
+        <!-- Mensagem de fechamento -->
+        <p>Favor informar atualização de atividade, previsão de início, bem como plano de ação e/ou previsão para conclusão.</p>
+        <p>Conto com seu apoio para atualização do status diário.</p>
+        <p>Jessica Alexandre | PMO Integrador</p>
+        
+        <!-- Botão com link para status das atividades -->
+        <a href="https://lookerstudio.google.com/s/vaEaNl1CT4c" class="button">Painel de atividades</a>
+
+        <!-- Container para centralizar o iframe -->
+        <div class="iframe-container">
+            <iframe width="600" height="1300" src="https://lookerstudio.google.com/embed/reporting/82dac439-077d-41e7-bdd1-b4e89c3a487b/page/STH1D" frameborder="0" allowfullscreen sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
+        </div>
+    </div>
+</body>
+</html>
